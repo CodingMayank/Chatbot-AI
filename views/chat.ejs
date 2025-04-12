@@ -35,12 +35,53 @@
         Send
       </button>
     </form>
+
+    <!-- Control Buttons -->
+    <div class="text-right space-x-3">
+      <button id="speakBtn"
+              class="hidden text-sm text-green-600 hover:underline">
+        🔊 Speak
+      </button>
+      <button id="stopSpeakingBtn"
+              class="hidden text-sm text-red-600 hover:underline">
+        ⏹️ Stop Speaking
+      </button>
+    </div>
   </div>
 
   <!-- Chat Script -->
   <script>
     const form = document.getElementById('chatForm');
     const chatbox = document.getElementById('chatbox');
+    const speakBtn = document.getElementById('speakBtn');
+    const stopBtn = document.getElementById('stopSpeakingBtn');
+
+    let lastBotMessage = '';
+
+    const speakText = (text) => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = 1;
+
+      utterance.onend = () => {
+        stopBtn.classList.add('hidden');
+        speakBtn.classList.remove('hidden');
+      };
+
+      window.speechSynthesis.speak(utterance);
+      speakBtn.classList.add('hidden');
+      stopBtn.classList.remove('hidden');
+    };
+
+    stopBtn.onclick = () => {
+      window.speechSynthesis.cancel();
+      stopBtn.classList.add('hidden');
+      speakBtn.classList.remove('hidden');
+    };
+
+    speakBtn.onclick = () => {
+      speakText(lastBotMessage);
+    };
 
     form.onsubmit = async (e) => {
       e.preventDefault();
@@ -63,6 +104,7 @@
       });
 
       const data = await res.json();
+      lastBotMessage = data.answer;
 
       // Format bot response
       const formatted = data.answer
@@ -78,6 +120,10 @@
           </div>
         </div>
       `;
+
+      // Show speak button
+      speakBtn.classList.remove('hidden');
+      stopBtn.classList.add('hidden');
 
       chatbox.scrollTop = chatbox.scrollHeight;
       form.question.value = '';
