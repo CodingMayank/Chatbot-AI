@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Web Chatbot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="https://api.iconify.design/ph/robot.svg" type="image/svg+xml">
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center font-sans">
+
+  <div class="bg-white shadow-2xl rounded-2xl p-6 w-full max-w-3xl space-y-4 border border-gray-200">
+    
+    <!-- Header -->
+    <div class="flex items-center gap-2 border-b pb-3">
+      <img src="https://api.iconify.design/ph/robot.svg" alt="Chatbot" class="w-6 h-6">
+      <h1 class="text-xl font-semibold text-gray-800">Smart Web Chatbot</h1>
+    </div>
+
+    <!-- Subheading -->
+    <p class="text-sm text-gray-500">Chat about: <span class="text-blue-600 font-medium break-words"><%= url %></span></p>
+
+    <!-- Chat messages box -->
+    <div id="chatbox" class="bg-gray-50 rounded-lg p-4 h-[400px] overflow-y-scroll space-y-4 border border-gray-200 scroll-smooth">
+      <!-- Messages appear here -->
+    </div>
+
+    <!-- Chat form -->
+    <form id="chatForm" class="flex gap-2">
+      <input type="hidden" name="url" value="<%= url %>">
+      <input name="question" required
+             class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+             placeholder="Ask something about the webpage..." />
+      <button type="submit"
+              class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+        Send
+      </button>
+    </form>
+  </div>
+
+  <!-- Chat Script -->
+  <script>
+    const form = document.getElementById('chatForm');
+    const chatbox = document.getElementById('chatbox');
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const question = form.question.value;
+      const url = form.url.value;
+
+      // Append user message
+      chatbox.innerHTML += `
+        <div class="flex justify-end">
+          <div class="bg-blue-500 text-white p-3 rounded-lg max-w-[80%] shadow">
+            <strong>You:</strong> ${question}
+          </div>
+        </div>
+      `;
+
+      const res = await fetch('/chat/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question, url })
+      });
+
+      const data = await res.json();
+
+      // Format bot response
+      const formatted = data.answer
+        .split('\n')
+        .filter(line => line.trim() !== '')
+        .map(line => `<p class="mb-2">${line}</p>`)
+        .join('');
+
+      chatbox.innerHTML += `
+        <div class="flex justify-start">
+          <div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[80%] shadow">
+            <strong>Bot:</strong> ${formatted}
+          </div>
+        </div>
+      `;
+
+      chatbox.scrollTop = chatbox.scrollHeight;
+      form.question.value = '';
+    };
+  </script>
+</body>
+</html>
