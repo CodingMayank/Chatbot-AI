@@ -5,33 +5,50 @@
   <title>Smart Web Chatbot</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="icon" href="https://api.iconify.design/ph/robot.svg" type="image/svg+xml">
-</head>
-<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center font-sans">
+  <style>
+    @keyframes slideInLeft {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(0); }
+    }
 
-  <div class="bg-white shadow-2xl rounded-2xl p-6 w-full max-w-3xl space-y-4 border border-gray-200">
+    @keyframes slideInRight {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(0); }
+    }
+
+    .slide-in-left {
+      animation: slideInLeft 1s ease-in-out;
+    }
+
+    .slide-in-right {
+      animation: slideInRight 1s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center font-sans">
+
+  <div class="bg-gray-800 rounded-2xl shadow-2xl p-8 w-full max-w-3xl space-y-6 border border-gray-700">
     
     <!-- Header -->
-    <div class="flex items-center gap-2 border-b pb-3">
-      <img src="https://api.iconify.design/ph/robot.svg" alt="Chatbot" class="w-6 h-6">
-      <h1 class="text-xl font-semibold text-gray-800">Smart Web Chatbot</h1>
+    <div class="text-center">
+      <img src="https://api.iconify.design/ph/robot.svg" class="mx-auto w-10 h-10 mb-2" />
+      <h1 class="text-2xl font-bold text-white">Smart Web Chatbot</h1>
+      <p class="text-gray-400 text-sm mt-1">Chat about: <span class="text-blue-400 break-words"><%= url %></span></p>
     </div>
 
-    <!-- Subheading -->
-    <p class="text-sm text-gray-500">Chat about: <span class="text-blue-600 font-medium break-words"><%= url %></span></p>
-
     <!-- Chat messages box -->
-    <div id="chatbox" class="bg-gray-50 rounded-lg p-4 h-[400px] overflow-y-scroll space-y-4 border border-gray-200 scroll-smooth">
+    <div id="chatbox" class="bg-gray-700 rounded-lg p-4 h-[400px] overflow-y-scroll space-y-4 border border-gray-600 scroll-smooth">
       <!-- Messages appear here -->
     </div>
 
     <!-- Chat form -->
-    <form id="chatForm" class="flex gap-2">
+    <form id="chatForm" class="space-y-4">
       <input type="hidden" name="url" value="<%= url %>">
       <input name="question" required
-             class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+             class="w-full p-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 slide-in-left"
              placeholder="Ask something about the webpage..." />
       <button type="submit"
-              class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition">
+              class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition slide-in-right">
         Send
       </button>
     </form>
@@ -39,11 +56,11 @@
     <!-- Control Buttons -->
     <div class="text-right space-x-3">
       <button id="speakBtn"
-              class="hidden text-sm text-green-600 hover:underline">
+              class="hidden text-sm text-green-400 hover:underline">
         🔊 Speak
       </button>
       <button id="stopSpeakingBtn"
-              class="hidden text-sm text-red-600 hover:underline">
+              class="hidden text-sm text-red-400 hover:underline">
         ⏹️ Stop Speaking
       </button>
     </div>
@@ -91,7 +108,7 @@
       // Append user message
       chatbox.innerHTML += `
         <div class="flex justify-end">
-          <div class="bg-blue-500 text-white p-3 rounded-lg max-w-[80%] shadow">
+          <div class="bg-blue-500 text-white p-3 rounded-lg max-w-[80%] shadow slide-in-right">
             <strong>You:</strong> ${question}
           </div>
         </div>
@@ -115,7 +132,7 @@
 
       chatbox.innerHTML += `
         <div class="flex justify-start">
-          <div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[80%] shadow">
+          <div class="bg-gray-600 text-gray-200 p-3 rounded-lg max-w-[80%] shadow slide-in-left">
             <strong>Bot:</strong> ${formatted}
           </div>
         </div>
